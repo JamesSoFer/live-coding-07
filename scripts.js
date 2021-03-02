@@ -1,7 +1,7 @@
 // Nuestro API:
-// https://5d2cd8678c90070014972942.mockapi.io/people
+// https://603dd05a48171b0017b2db72.mockapi.io/people
 
-const apiUrl = "https://5d2cd8678c90070014972942.mockapi.io/people/";
+const apiUrl = "https://603dd05a48171b0017b2db72.mockapi.io/people/";
 
 // ELEMENTOS
 const addButton = document.querySelector(".add-person__button");
@@ -9,6 +9,7 @@ const cancelButton = document.querySelector(".people-add__cancel");
 const addForm = document.querySelector(".people-add");
 const htmlListElement = document.querySelector(".people__list");
 const personaContentElement = document.querySelector(".people__content");
+const myForm = document.querySelector("form");
 
 // EVENTOS
 addButton.addEventListener("click", () => {
@@ -176,3 +177,49 @@ Clona tu propio API: https://mockapi.io/clone/5d2cd8678c90070014972943
 
 */
 
+function obtenerValue() {
+
+  myForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+  
+    const inputValues = {
+      "name": `
+        $(myForm.elements[0].value)
+      `,
+      "email": `
+        $(myForm.elements[1].value)
+      `,
+      "phone": `
+        $(myForm.elements[2].value)
+      `,
+      "city": `
+        $(myForm.elements[3].value)
+      `
+    }
+    
+    myForm.elements[0].value = '';
+    myForm.elements[1].value = '';
+    myForm.elements[2].value = '';
+    myForm.elements[3].value = '';
+    
+    añadirPersonas();
+  })
+
+}
+
+function añadirPersonas(inputsValues) {
+
+  fetch(`${apiUrl}`, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body:   JSON.stringify(inputsValues),
+  }).then((response) => {
+    // fix this
+  })
+}
+
+const obValue = obtenerValue();
+
+personaContentElement.innerText = obValue;
