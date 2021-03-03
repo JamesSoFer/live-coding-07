@@ -27,6 +27,14 @@ function getListElement(id) {
   return document.querySelector(`[data-id="${id}"]`);
 }
 
+function createUser(user) {
+  return `
+  <li data-id"${user.id}">
+    <h3 role = "button">${user.fullName}</h3>
+    <button>X</button>
+  </li>
+  `
+} 
 /*
 PASOS A SEGUIR
 1. Obtener el listado de todos las personas y pintarlos en el sidebar de la izquierda
@@ -39,12 +47,7 @@ PASOS A SEGUIR
 function getPeopleHtmlList(people) {
   return people
     .map((person) => {
-      return `
-        <li data-id="${person.id}">
-          <h3 role="button">${person.fullName}</h3>
-          <button>X</button>
-        </li>
-      `;
+      return createUser(person);
     })
     .join("");
 }
@@ -177,24 +180,14 @@ Clona tu propio API: https://mockapi.io/clone/5d2cd8678c90070014972943
 
 */
 
-function obtenerValue() {
-
-  myForm.addEventListener("submit", (e) => {
+function obtenerValue(e) {
     e.preventDefault();
   
     const inputValues = {
-      "name": `
-        $(myForm.elements[0].value)
-      `,
-      "email": `
-        $(myForm.elements[1].value)
-      `,
-      "phone": `
-        $(myForm.elements[2].value)
-      `,
-      "city": `
-        $(myForm.elements[3].value)
-      `
+      "FullName": `$(myForm.elements[0].value)`,
+      "email": `$(myForm.elements[1].value)`,
+      "phone": `$(myForm.elements[2].value)`,
+      "city": `$(myForm.elements[3].value)`
     }
     
     myForm.elements[0].value = '';
@@ -202,10 +195,9 @@ function obtenerValue() {
     myForm.elements[2].value = '';
     myForm.elements[3].value = '';
     
-    añadirPersonas();
-  })
-
+    añadirPersonas(inputValues);
 }
+
 
 function añadirPersonas(inputsValues) {
 
@@ -214,12 +206,17 @@ function añadirPersonas(inputsValues) {
     headers: {
         "Content-Type": "application/json"
     },
-    body:   JSON.stringify(inputsValues),
-  }).then((response) => {
-    // fix this
+    body: JSON.stringify(inputsValues),
   })
+    .then((response) => {
+      return response.json()
+    })
+    .then((data) => {
+      htmlListElement.innerHTML += createUser(data);
+    })
+    .catch((err) => {
+      alert(`Ocurrió un error de tipo ${err}`);
+    });
+    alert('la persona fue agregada satisfactoriamente');
 }
-
-const obValue = obtenerValue();
-
-personaContentElement.innerText = obValue;
+myForm.addEventListener("submit", obtenerValue);
